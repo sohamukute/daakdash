@@ -1,0 +1,15 @@
+target/
+*.class
+*.jar
+!**/maven-wrapper.jar
+.idea/
+*.iml
+.vscode/
+node_modules/
+dist/
+.env
+*.log
+demo-video.mp4
+.playwright-mcp/
+.git.backup-*/
+.git-new/
