@@ -1,0 +1,129 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    background-color: #f3e9d2;
+    color: #1a1714;
+    font-family: "Public Sans", ui-sans-serif, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background: #b3261e;
+    color: #faf4e6;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* an ink underline that draws in on hover */
+.link-ink {
+  position: relative;
+}
+.link-ink::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  height: 2px;
+  width: 100%;
+  background: #b3261e;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s ease;
+}
+.link-ink:hover::after {
+  transform: scaleX(1);
+}
+
+/* cards rise a touch on hover */
+.lift {
+  transition:
+    transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.35s ease;
+}
+.lift:hover {
+  transform: translateY(-5px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .lift {
+    transition: none;
+  }
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+@layer components {
+  .daak-input {
+    @apply w-full rounded-sm border-2 border-ink/20 bg-white/60 px-3 py-2 font-sans text-sm text-ink outline-none transition focus:border-inkred;
+  }
+  .daak-select {
+    @apply w-full rounded-sm border-2 border-ink/20 bg-white/60 px-3 py-2 font-sans text-sm text-ink outline-none transition focus:border-inkred;
+  }
+  .daak-btn {
+    @apply rounded-sm bg-inkred px-4 py-2.5 text-center text-sm font-semibold text-cream transition hover:bg-oxblood disabled:opacity-60;
+  }
+  .daak-btn-ghost {
+    @apply rounded-sm border-2 border-ink/20 px-4 py-2 text-center text-sm font-semibold text-ink transition hover:border-ink/45;
+  }
+  .daak-chip {
+    @apply inline-flex items-center gap-1 rounded-full border border-ink/15 bg-cream px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wide text-ink/70;
+  }
+}
+
+/* faint paper noise, drawn once as a fixed layer behind everything */
+.paper-grain {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-color: #f3e9d2;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+}
+
+/* punched hole edge, like a stamp or a ticket stub */
+.perforated {
+  -webkit-mask:
+    radial-gradient(circle 6px at 0 8px, transparent 5px, #000 6px) repeat-y left / 12px 18px,
+    radial-gradient(circle 6px at 100% 8px, transparent 5px, #000 6px) repeat-y right / 12px 18px,
+    linear-gradient(#000, #000) no-repeat center / calc(100% - 22px) 100%;
+  -webkit-mask-composite: source-over;
+  mask:
+    radial-gradient(circle 6px at 0 8px, transparent 5px, #000 6px) repeat-y left / 12px 18px,
+    radial-gradient(circle 6px at 100% 8px, transparent 5px, #000 6px) repeat-y right / 12px 18px,
+    linear-gradient(#000, #000) no-repeat center / calc(100% - 22px) 100%;
+}
+
+/* admin map depot pin: a small stamped city label with a live stock count */
+.depot-pin {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  border: 2px solid #1a1714;
+  background: #faf4e6;
+  border-radius: 9999px;
+  padding: 2px 8px;
+  font-family: "Space Mono", monospace;
+  font-size: 10px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(26, 23, 20, 0.25);
+}
+.depot-pin b {
+  background: #b3261e;
+  color: #faf4e6;
+  border-radius: 9999px;
+  padding: 0 6px;
+}
+.depot-pin:hover {
+  background: #f3e9d2;
+}
