@@ -1,0 +1,63 @@
+name: deploy
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  images:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      matrix:
+        service:
+          - auth
+          - gateway
+          - tracking
+          - frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+      - uses: docker/build-push-action@v6
+        with:
+          context: ./${{ matrix.service }}
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/daakdash-${{ matrix.service }}:latest
+        continue-on-error: true
+
+  release:
+    needs: images
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: check for a deploy target
+        id: check
+        run: |
+          if [ -n "${{ secrets.DEPLOY_HOST }}" ]; then
+            echo "go=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "no DEPLOY_HOST secret set, skipping the ssh step"
+            echo "go=false" >> "$GITHUB_OUTPUT"
+          fi
+      - name: ship to the vm
+        if: steps.check.outputs.go == 'true'
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_KEY }}
+          script: |
+            cd ~/daakdash
+            docker compose -f docker-compose.prod.yml pull
+            docker compose -f docker-compose.prod.yml up -d

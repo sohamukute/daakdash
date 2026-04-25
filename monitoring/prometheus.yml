@@ -1,0 +1,23 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: gateway
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ['gateway:8080']
+
+  - job_name: auth
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ['auth:8081']
+
+  - job_name: tracking
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ['tracking:8082']
+
+  - job_name: realtime
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ['realtime:8083']

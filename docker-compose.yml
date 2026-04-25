@@ -1,0 +1,104 @@
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: daakdash
+      POSTGRES_PASSWORD: daakdash
+      POSTGRES_DB: daakdash
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U daakdash"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  auth:
+    build: ./auth
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/auth
+      DB_USER: daakdash
+      DB_PASSWORD: daakdash
+      JWT_SECRET: dev-secret-change-me-with-env-var-min-32-bytes
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+      MAIL_HOST: ${MAIL_HOST:-}
+      MAIL_PORT: ${MAIL_PORT:-587}
+      MAIL_USER: ${MAIL_USER:-}
+      MAIL_PASS: ${MAIL_PASS:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  tracking:
+    build: ./tracking
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/geo
+      DB_USER: daakdash
+      DB_PASSWORD: daakdash
+      REDIS_HOST: redis
+      JWT_SECRET: dev-secret-change-me-with-env-var-min-32-bytes
+      ORS_API_KEY: ${ORS_API_KEY:-}
+      SMS_API_KEY: ${SMS_API_KEY:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  gateway:
+    build: ./gateway
+    ports:
+      - "8080:8080"
+    environment:
+      JWT_SECRET: dev-secret-change-me-with-env-var-min-32-bytes
+      REDIS_HOST: redis
+    depends_on:
+      - auth
+      - tracking
+      - redis
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - gateway
+
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    profiles: ["observability"]
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+
+  grafana:
+    image: grafana/grafana:11.2.0
+    profiles: ["observability"]
+    ports:
+      - "3001:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    volumes:
+      - ./monitoring/grafana/datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml:ro
+      - ./monitoring/grafana/dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafanadata:/var/lib/grafana
+    depends_on:
+      - prometheus
+
+volumes:
+  pgdata:
+  grafanadata:
