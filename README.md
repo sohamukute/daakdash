@@ -6,6 +6,12 @@ by destination, long lanes go by train and short ones by truck, and a delivery p
 takes them the last mile with an OTP handover. The name comes from daak, the old postal
 relay, plus dash. Purani daak, nayi raftaar.
 
+## Demo
+
+<video src="docs/demo.mp4" controls muted playsinline width="100%"></video>
+
+[Watch the demo video](docs/demo.mp4)
+
 ## How it works
 
 ```
