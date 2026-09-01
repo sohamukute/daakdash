@@ -18,11 +18,25 @@ export default {
         },
         pickup: "#1FA86B",
         drop: "#B3261E",
+        // public site palette (landing): vermilion on warm stone, ink text, amber signal
+        dd: {
+          red: "#E8432E",
+          "red-deep": "#C2301E",
+          "red-soft": "#FCE6E1",
+          ink: "#14181F",
+          navy: "#16233B",
+          stone: "#F6F3EE",
+          sand: "#EEE8DC",
+          line: "#E3DDD2",
+          amber: "#FFB547",
+          sage: "#5DAA86",
+        },
       },
       fontFamily: {
         display: ["Fraunces", "Georgia", "serif"],
         sans: ["'Public Sans'", "ui-sans-serif", "system-ui", "sans-serif"],
         mono: ["'Space Mono'", "ui-monospace", "monospace"],
+        clash: ["'Clash Grotesk'", "ui-sans-serif", "system-ui", "sans-serif"],
       },
       keyframes: {
         "fade-up": {

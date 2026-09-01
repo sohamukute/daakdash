@@ -1,4 +1,4 @@
-type Name = "runner" | "postbox" | "milestone" | "truck" | "plane" | "train" | "ship";
+type Name = "runner" | "postbox" | "milestone" | "truck" | "train";
 
 type Props = {
   name: Name;
@@ -32,18 +32,12 @@ const paths: Record<Name, JSX.Element> = {
       <circle cx="44" cy="46" r="4" />
     </>
   ),
-  plane: <path d="M8 34 L54 28 L44 36 L50 48 L42 44 L34 50 L32 38 L8 34 Z" />,
   train: (
     <>
       <rect x="16" y="14" width="32" height="30" rx="6" />
       <path d="M16 30 h32 M24 14 v16 M40 14 v16 M22 50 l-4 6 M42 50 l4 6" />
       <circle cx="24" cy="46" r="3" />
       <circle cx="40" cy="46" r="3" />
-    </>
-  ),
-  ship: (
-    <>
-      <path d="M12 38 h40 l-6 12 h-28 z M22 38 v-14 h10 l8 14 M28 24 v-6" />
     </>
   ),
 };
